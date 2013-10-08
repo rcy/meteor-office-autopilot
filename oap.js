@@ -16,8 +16,21 @@ OAP = {
   ///////////////
   // API WRAPPERS
   ///////////////
+  createContact: function(options) {
+    this.checkConfig();
+    check(options.email, String);
+    var response = HTTP.post(endpoint, { params: { appid: this.appid, key: this.key,
+                                                   return_id: 1, // XXX what is this?
+                                                   reqType: 'add',
+                                                   data: '<contact><Group_Tag name="Contact Information"><field name="E-Mail">' + options.email + '</field></Group_Tag></contact>'
+                                                 }
+                                       });
+    return xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+  },
+
   findContactsByEmail: function(email) {
     this.checkConfig();
+    check(email, String);
     var response = HTTP.post(endpoint, { params: { appid: this.appid, key: this.key,
                                                    return_id: 1, // XXX what is this?
                                                    reqType: 'search',
@@ -73,6 +86,9 @@ OAP = {
 
 // methods for the client to call
 Meteor.methods({
+  'oap/createContact': function(options) {
+    return OAP.createContact(options);
+  },
   'oap/findContactById': function(id) {
     return OAP.findContactById(id);
   },
