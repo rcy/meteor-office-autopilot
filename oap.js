@@ -1,5 +1,10 @@
 var endpoint = 'https://api.moon-ray.com/cdata.php';
 
+var NonEmptyString = Match.Where(function (x) {
+  check(x, String);
+  return x.length > 0;
+});
+
 OAP = {
   checkConfig: function() {
     if (!this.appid || !this.key)
@@ -7,10 +12,11 @@ OAP = {
     return true;
   },
   config: function(options) {
-    check(options.appid, String);
-    check(options.key, String);
+    check(options.appid, NonEmptyString);
+    check(options.key, NonEmptyString);
     this.appid = options.appid;
     this.key = options.key;
+    console.log('OAP configured with appid:', this.appid, 'key:', this.key);
   },
 
   ///////////////
@@ -18,26 +24,28 @@ OAP = {
   ///////////////
   createContact: function(options) {
     this.checkConfig();
-    check(options.email, String);
+    check(options.email, NonEmptyString);
     var response = HTTP.post(endpoint, { params: { appid: this.appid, key: this.key,
                                                    return_id: 1, // XXX what is this?
                                                    reqType: 'add',
                                                    data: '<contact><Group_Tag name="Contact Information"><field name="E-Mail">' + options.email + '</field></Group_Tag></contact>'
                                                  }
                                        });
-    return xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    var obj = xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    return obj.result && obj.result.contact && obj.result.contact[0];
   },
 
   findContactsByEmail: function(email) {
     this.checkConfig();
-    check(email, String);
+    check(email, NonEmptyString);
     var response = HTTP.post(endpoint, { params: { appid: this.appid, key: this.key,
                                                    return_id: 1, // XXX what is this?
                                                    reqType: 'search',
                                                    data: '<search><equation><field>E-mail</field><op>e</op><value>'+email+'</value></equation></search>'
                                                  }
                                        });
-    return xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    var data = xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    return data.result && data.result.contact;
   },
 
   findContactById: function(id) {
@@ -53,9 +61,9 @@ OAP = {
 
   updateContactField: function(id, options) {
     console.log('updateContactField', id, options);
-    check(options.group_tag, String);
-    check(options.field, String);
-    check(options.value, String);
+    check(options.group_tag, NonEmptyString);
+    check(options.field, NonEmptyString);
+    check(options.value, NonEmptyString);
 
     var response = HTTP.post(endpoint, {params: { appid: this.appid, key: this.key,
                                                   return_id: 1, // XXX what is this?
@@ -64,12 +72,13 @@ OAP = {
                                                 }
                                         });
     console.log('response:', response);
-    return xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    var obj = xml2js.parseStringSync(response.content, {explicitArray: false, mergeAttrs: true});
+    return obj.result && obj.result.status;
   },
 
   updateContactTag: function(id, options) {
     console.log('updateContactTag', id, options);
-    check(options.tag, String);
+    check(options.tag, NonEmptyString);
     check(options.value, Boolean);
 
     var response = HTTP.post(endpoint, {params: { appid: this.appid, key: this.key,

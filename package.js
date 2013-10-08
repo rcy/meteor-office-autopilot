@@ -3,7 +3,7 @@ Package.describe({
 });
 
 Package.on_use(function(api) {
-  api.use(['livedata', 'underscore', 'http', 'xml2js']);
+  api.use(['livedata', 'check', 'underscore', 'http', 'xml2js']);
 
   api.add_files(['oap.js'], 'server');
 
