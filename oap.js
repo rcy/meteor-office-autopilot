@@ -60,6 +60,7 @@ OAP = {
   },
 
   updateContactField: function(id, options) {
+    this.checkConfig();
     console.log('updateContactField', id, options);
     check(options.group_tag, NonEmptyString);
     check(options.field, NonEmptyString);
@@ -73,10 +74,11 @@ OAP = {
                                         });
     console.log('response:', response);
     var obj = xml2js.parseStringSync(response.content, {explicitArray: false, mergeAttrs: true});
-    return obj.result && obj.result.status;
+    return obj.result;
   },
 
   updateContactTag: function(id, options) {
+    this.checkConfig();
     console.log('updateContactTag', id, options);
     check(options.tag, NonEmptyString);
     check(options.value, Boolean);
