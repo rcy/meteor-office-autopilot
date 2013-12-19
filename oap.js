@@ -7,7 +7,7 @@ var NonEmptyString = Match.Where(function (x) {
 
 OAP = {
   checkConfig: function() {
-    if (!this.appid || !this.key)
+    if (!this.isConfigured())
       throw new Meteor.Error("OAP not configured");
     return true;
   },
@@ -17,6 +17,9 @@ OAP = {
     this.appid = options.appid;
     this.key = options.key;
     console.log('OAP configured with appid:', this.appid, 'key:', this.key);
+  },
+  isConfigured: function () {
+    return (this.appid && this.key) ? true : false;
   },
 
   ///////////////
