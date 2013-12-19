@@ -1,0 +1,6 @@
+{
+  "oap_config": {
+    "appid": "replace with appid",
+    "key": "replace with oap_key"
+  }
+}

@@ -9,3 +9,8 @@ Package.on_use(function(api) {
 
   api.export('OAP');
 });
+
+Package.on_test(function (api, where) {
+  api.use(['tinytest', 'office-autopilot', 'xml2js'], ['client', 'server']);
+  api.add_files(['tests.js'], ['client', 'server']);
+});

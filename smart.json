@@ -1,5 +1,11 @@
 {
-  "packages": {
-    "xml2js": {}
-  }
+    "name": "office-autopilot",
+    "description": "Implementation of Office AutoPilot API for Meteor",
+    "homepage": "",
+    "author": "Ryan Yeske <rcyeske@gmail.com>",
+    "version": "0.1.0",
+    "git": "https://github.com/rcy/meteor-office-autopilot.git",
+    "packages": {
+        "xml2js": {}
+    }
 }

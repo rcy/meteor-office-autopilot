@@ -45,7 +45,7 @@ OAP = {
                                                  }
                                        });
     var data = xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
-    return data.result && data.result.contact;
+    return data && data.result && data.result.contact;
   },
 
   findContactById: function(id) {
@@ -56,12 +56,13 @@ OAP = {
                                                    data: '<contact_id>'+id+'</contact_id>'
                                                  }
                                        });
-    return xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+
+    var data = xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    return data && data.result && data.result.contact && data.result.contact[0];
   },
 
   updateContactField: function(id, options) {
     this.checkConfig();
-    console.log('updateContactField', id, options);
     check(options.group_tag, NonEmptyString);
     check(options.field, NonEmptyString);
     check(options.value, NonEmptyString);
@@ -72,14 +73,13 @@ OAP = {
                                                   data: '<contact id="'+id+'"><Group_Tag name="'+options.group_tag+'"><field name="'+options.field+'">'+options.value+'</field></Group_Tag></contact>'
                                                 }
                                         });
-    console.log('response:', response);
+
     var obj = xml2js.parseStringSync(response.content, {explicitArray: false, mergeAttrs: true});
     return obj.result;
   },
 
   updateContactTag: function(id, options) {
     this.checkConfig();
-    console.log('updateContactTag', id, options);
     check(options.tag, NonEmptyString);
     check(options.value, Boolean);
 
@@ -90,7 +90,8 @@ OAP = {
                                                 }
                                         });
 
-    return xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    var obj = xml2js.parseStringSync(response.content, {explicitArray: true, mergeAttrs: true});
+    return obj.result && obj.result.contact && obj.result.contact[0];
   }
 
 };
