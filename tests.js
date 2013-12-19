@@ -22,18 +22,12 @@ if (Meteor.isServer) {
     test.equal(typeof Meteor._get(Meteor.settings, 'oap_config', 'key'), 'string', "*** Run with meteor --settings oap_config.json ***");
   });
 
-  Tinytest.add(base+'api call without config', function (test) {
-    OAP.appid = null;
-    OAP.key = null;
-    var result = OAP.findContactsByEmail('rcyeske@gmail.com');
-    test.equal(result, null);
-  });
-
   Tinytest.add(base+'find contact by email', function (test) {
     OAP.config(Meteor.settings.oap_config);
     var result = OAP.findContactsByEmail('rcyeske@gmail.com');
     test.equal(result[0].id, '4528');
   });
+
 
   Tinytest.add(base+'find contact by id', function (test) {
     OAP.config(Meteor.settings.oap_config);

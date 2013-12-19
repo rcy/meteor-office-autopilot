@@ -7,11 +7,8 @@ var NonEmptyString = Match.Where(function (x) {
 
 OAP = {
   checkConfig: function() {
-    var configured = (this.appid && this.key);
-    if (!configured) {
-      console.error('oap not configured!');
-      return false;
-    }
+    if (!this.appid || !this.key)
+      throw new Meteor.Error("OAP not configured");
     return true;
   },
   config: function(options) {
@@ -26,9 +23,7 @@ OAP = {
   // API WRAPPERS
   ///////////////
   createContact: function(options) {
-    if (!this.checkConfig())
-      return null;
-
+    this.checkConfig();
     check(options.email, NonEmptyString);
     var response = HTTP.post(endpoint, { params: { appid: this.appid, key: this.key,
                                                    return_id: 1, // XXX what is this?
@@ -41,8 +36,7 @@ OAP = {
   },
 
   findContactsByEmail: function(email) {
-    if (!this.checkConfig())
-      return null;
+    this.checkConfig();
     check(email, NonEmptyString);
     var response = HTTP.post(endpoint, { params: { appid: this.appid, key: this.key,
                                                    return_id: 1, // XXX what is this?
@@ -55,9 +49,7 @@ OAP = {
   },
 
   findContactById: function(id) {
-    if (!this.checkConfig())
-      return null;
-
+    this.checkConfig();
     var response = HTTP.post(endpoint, { params: { appid: this.appid, key: this.key,
                                                    return_id: 1, // XXX what is this?
                                                    reqType: 'fetch',
@@ -70,9 +62,7 @@ OAP = {
   },
 
   updateContactField: function(id, options) {
-    if (!this.checkConfig())
-      return null;
-
+    this.checkConfig();
     check(options.group_tag, NonEmptyString);
     check(options.field, NonEmptyString);
     check(options.value, NonEmptyString);
@@ -89,9 +79,7 @@ OAP = {
   },
 
   updateContactTag: function(id, options) {
-    if (!this.checkConfig())
-      return null;
-
+    this.checkConfig();
     check(options.tag, NonEmptyString);
     check(options.value, Boolean);
 
